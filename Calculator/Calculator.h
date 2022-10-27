@@ -3,18 +3,14 @@
 #include <QtWidgets/QWidget>
 #include <QString>
 #include "ui_Calculator.h"
-#include "AddFactory.h"
-#include "SubFactory.h"
-#include "MulFactory.h"
-#include "DivFactory.h"
+#include "Operation.h"
+#include "OperationFactory.h"
 class Calculator : public QWidget
 {
     Q_OBJECT
 private:
-    AddFactory *addfactory;
-    SubFactory *subfactory;
-    MulFactory *mulfactory;
-    DivFactory *divfactory;
+    Operation *cal;
+    OperationFactory *operatorfactory;
     double operand1;
     double operand2;
     int operat_flag;
@@ -23,8 +19,9 @@ private:
 public:
     Calculator(QWidget *parent = nullptr);
     ~Calculator();
-    void readNum(int num);
+    void readNum(int num , int dot = 0);
     void checkString(QString s);
+    void setCalNum();
 public slots:
     void on_number0_clicked();
     void on_number1_clicked();
@@ -42,6 +39,8 @@ public slots:
     void on_operatorDiv_clicked();
     void on_operatorResult_clicked();
     void on_clearbtn_clicked();
+    void on_dot_clicked();
+    void on_reverseNum_clicked();
 private:
     Ui::CalculatorClass ui;
     QString textPanel;

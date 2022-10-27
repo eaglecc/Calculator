@@ -3,9 +3,9 @@
 #pragma execution_character_set("utf-8")  
 #endif
 
-#include "OperatorFactory.h"
+#include "Operation.h"
 class DivFactory :
-    public OperatorFactory
+    public Operation
 {
 public:
     DivFactory();

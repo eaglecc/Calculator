@@ -1,7 +1,7 @@
 #pragma once
-#include "OperatorFactory.h"
+#include "Operation.h"
 
-class AddFactory : public OperatorFactory
+class AddFactory : public Operation
 {
 public:
     AddFactory();

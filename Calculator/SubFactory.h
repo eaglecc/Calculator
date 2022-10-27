@@ -1,6 +1,6 @@
 #pragma once
-#include "OperatorFactory.h"
-class SubFactory : public OperatorFactory
+#include "Operation.h"
+class SubFactory : public Operation
 {
 public:
     SubFactory();

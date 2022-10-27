@@ -1,14 +1,15 @@
 #pragma once
-class OperatorFactory
+class Operation
 {
 private:
     double operand1;
     double operand2;
 public:
+    Operation();
     void setOperand1(double operand1);
     double getOperand1();
     void setOperand2(double operand2);
     double getOperand2();
-    double getResult();
+    virtual double getResult() = 0;
 };
 

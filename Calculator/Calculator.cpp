@@ -1,6 +1,7 @@
 #include "Calculator.h"
 
 #include <QString>
+#include <QDebug>
 
 //工厂模式实现计算器
 Calculator::Calculator(QWidget *parent)
@@ -28,31 +29,38 @@ Calculator::Calculator(QWidget *parent)
     ui.operatorMul->setFont(QFont("YouYuan", 20, QFont::Bold));
     ui.operatorDiv->setFont(QFont("YouYuan", 20, QFont::Bold));
     ui.operatorResult->setFont(QFont("YouYuan", 20, QFont::Bold));
+    ui.dot->setFont(QFont("YouYuan", 20, QFont::Bold));
     //传入输入数据，加法工厂返回加法结果
-    addfactory = new AddFactory();
-    subfactory = new SubFactory();
-    mulfactory = new MulFactory();
-    divfactory = new DivFactory();
+    cal = nullptr;
+    operatorfactory = new OperationFactory();
    
 }
 
 Calculator::~Calculator()
 {
-    delete addfactory;
-    delete subfactory;
-    delete mulfactory;
-    delete divfactory;
+    delete operatorfactory;
+    operatorfactory = nullptr;
+    cal = nullptr;
 }
 
-void Calculator::readNum(int num)
+void Calculator::readNum(int num , int dot)
 {
     //如果是第一个操作数
-    if (operat_flag == 0) {
+    if (operat_flag == 0 && dot ==0) {
         operand1 = operand1 * 10 + num;
     }
     //如果是第二个操作数
-    else {
+    else if(operat_flag == 1 && dot == 0) {
         operand2 = operand2 * 10 + num;
+    }
+    //如果是小数点
+    else if (operat_flag == 0 && dot == 1)
+    {
+        operand1 = resultPanel.toDouble();
+    }
+    else if (operat_flag == 1 && dot == 1)
+    {
+        operand2 = resultPanel.toDouble();
     }
 }
 
@@ -135,46 +143,30 @@ void Calculator::checkString(QString s)
     //检查式子中是否有运算符还是纯数字
     if (s.contains("+"))
     {
-        //运算已有的式子，返回结果，并显示。
-        addfactory->setOperand1(operand1);
-        addfactory->setOperand2(operand2);
-        result = addfactory->getResult();
-        textPanel = QString("%1").arg(result);
-        //把结果存到num1中，清零num2
-        operand1 = result;
-        operand2 = 0;
+        //工厂模式获取加法计算对象
+        cal = operatorfactory->creatCalculation('+');
+        setCalNum();
+
     }
     else if (s.contains("-"))
     {
-        subfactory->setOperand1(operand1);
-        subfactory->setOperand2(operand2);
-        result = subfactory->getResult();
-        textPanel = QString("%1").arg(result);
-        //把结果存到num1中，清零num2
-        operand1 = result;
-        operand2 = 0;
+        //工厂模式获取减法计算对象
+        cal = operatorfactory->creatCalculation('-');
+        setCalNum();
     }
     else if (s.contains("*"))
     {
-        mulfactory->setOperand1(operand1);
-        mulfactory->setOperand2(operand2);
-        result = mulfactory->getResult();
-        textPanel = QString("%1").arg(result);
-        //把结果存到num1中，清零num2
-        operand1 = result;
-        operand2 = 0;
+        //工厂模式获取乘法计算对象
+        cal = operatorfactory->creatCalculation('*');
+        setCalNum();
     }
     else if (s.contains("/"))
     {
-        divfactory->setOperand1(operand1);
-        divfactory->setOperand2(operand2);
-        result = divfactory->getResult();
-        textPanel = QString("%1").arg(result);
-        //把结果存到num1中，清零num2
-        operand1 = result;
-        operand2 = 0;
+        //工厂模式获取除法计算对象
+        cal = operatorfactory->creatCalculation('/');
+        setCalNum();
     }
-    else
+    else //纯数字
     {
         operand1 = s.toDouble();
         operand2 = 0.0;
@@ -182,6 +174,18 @@ void Calculator::checkString(QString s)
 
 }
 
+void Calculator::setCalNum()
+{
+    cal->setOperand1(operand1);
+    cal->setOperand2(operand2);
+    result = cal->getResult();
+    textPanel = QString("%1").arg(result);
+    //把结果存到num1中，清零num2
+    operand1 = result;
+    operand2 = 0.0;
+}
+
+//加法
 void Calculator::on_operatorAdd_clicked()
 {
     //先计算已有的式子
@@ -193,6 +197,7 @@ void Calculator::on_operatorAdd_clicked()
 
 }
 
+//减法
 void Calculator::on_operatorSub_clicked()
 {
     //先计算已有的式子
@@ -203,6 +208,7 @@ void Calculator::on_operatorSub_clicked()
     ui.resultText->setText(textPanel);
 }
 
+//乘法
 void Calculator::on_operatorMul_clicked()
 {
     QString s = ui.resultText->toPlainText();
@@ -213,6 +219,7 @@ void Calculator::on_operatorMul_clicked()
 
 }
 
+//除法
 void Calculator::on_operatorDiv_clicked()
 {
     QString s = ui.resultText->toPlainText();
@@ -223,14 +230,14 @@ void Calculator::on_operatorDiv_clicked()
 
 }
 
+//等于
 void Calculator::on_operatorResult_clicked()
 {
     QString s = ui.resultText->toPlainText();
     checkString(s);
     ui.resultText->setText(textPanel);
-
 }
-
+//清屏
 void Calculator::on_clearbtn_clicked()
 {
     ui.resultText->clear();
@@ -238,4 +245,38 @@ void Calculator::on_clearbtn_clicked()
     operand2 = 0.0;
     operat_flag = 0;
     textPanel = "";
+}
+//小数点
+void Calculator::on_dot_clicked()
+{
+    QString s = ui.resultText->toPlainText();
+    if (s.contains("."))
+    {
+        qDebug() << "不能有两个小数点";
+        return;
+    }
+    else
+    {
+        textPanel = textPanel + QString(".");
+        ui.resultText->setText(textPanel);
+        readNum(0 ,1);
+    }
+    
+}
+
+//反转
+void Calculator::on_reverseNum_clicked()
+{
+    on_operatorResult_clicked();
+    double s = textPanel.toDouble();
+    if (s > 0)
+    {
+        s = -s;
+        ui.resultText->setText("-"+QString(textPanel));
+    }
+    else
+    {
+        ui.resultText->setText("+"+QString(textPanel));
+    }
+    
 }
