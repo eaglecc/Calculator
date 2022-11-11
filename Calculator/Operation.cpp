@@ -23,3 +23,8 @@ double Operation::getOperand2()
 {
     return operand2;
 }
+
+double Operation::getResult()
+{
+    return 0.0;
+}

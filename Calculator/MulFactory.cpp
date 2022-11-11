@@ -4,9 +4,9 @@ MulFactory::MulFactory()
 {
 }
 
-double MulFactory::getResult()
+Operation * MulFactory::CreateOper()
 {
-    double opr1 = getOperand1();
-    double opr2 = getOperand2();
-    return opr1 * opr2;
+    Operation * pro = new Mul();
+    return pro;
 }
+

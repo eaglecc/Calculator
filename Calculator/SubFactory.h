@@ -1,9 +1,11 @@
 #pragma once
-#include "Operation.h"
-class SubFactory : public Operation
+#include "Sub.h"
+#include "FactoryInterFace.h"
+
+class SubFactory : public FactoryInterFace
 {
 public:
     SubFactory();
-    double getResult();
+    Operation * CreateOper();
 };
 

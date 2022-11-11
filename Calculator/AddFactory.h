@@ -1,12 +1,13 @@
 #pragma once
 #include "Operation.h"
+#include "FactoryInterFace.h"
+#include "Add.h"
 
-class AddFactory : public Operation
+//继承工厂类接口
+class AddFactory : public FactoryInterFace
 {
 public:
     AddFactory();
-    double getResult();
-
-
+    Operation * CreateOper();
 };
 

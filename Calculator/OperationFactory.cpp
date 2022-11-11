@@ -1,26 +1,31 @@
 #include "OperationFactory.h"
-#include "AddFactory.h"
-#include "SubFactory.h"
-#include "MulFactory.h"
-#include "DivFactory.h"
+#include "Add.h"
+#include "Sub.h"
+#include "Mul.h"
+#include "Div.h"
 #include "qdebug.h"
 
+OperationFactory::OperationFactory()
+{
+}
+
+//简单工厂模式工厂类，直接与加减乘除类进行交互
 Operation * OperationFactory::creatCalculation(char str)
 {
     Operation * cal = nullptr;
     switch (str)
     {
     case '+':
-        cal = new AddFactory();
+        cal = new Add();
         break;
     case '-':
-        cal = new SubFactory();
+        cal = new Sub();
         break;
     case '*':
-        cal = new MulFactory();
+        cal = new Mul();
         break;
     case '/':
-        cal = new DivFactory();
+        cal = new Div();
         break;
     default:
         qDebug() << "请输入正确的运算符" ;

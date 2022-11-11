@@ -4,9 +4,8 @@ SubFactory::SubFactory()
 {
 }
 
-double SubFactory::getResult()
+Operation * SubFactory::CreateOper()
 {
-    double opr1 = getOperand1();
-    double opr2 = getOperand2();
-    return opr1 - opr2;
+    Operation * pro = new Sub();
+    return pro;
 }

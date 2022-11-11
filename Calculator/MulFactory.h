@@ -1,10 +1,13 @@
 #pragma once
 #include "Operation.h"
+#include "FactoryInterFace.h"
+#include "Mul.h"
+
 class MulFactory :
-    public Operation
+    public FactoryInterFace
 {
 public:
     MulFactory();
-    double getResult();
+    Operation * CreateOper();
 };
 

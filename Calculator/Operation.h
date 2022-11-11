@@ -10,6 +10,6 @@ public:
     double getOperand1();
     void setOperand2(double operand2);
     double getOperand2();
-    virtual double getResult() = 0;
+    virtual double getResult();
 };
 

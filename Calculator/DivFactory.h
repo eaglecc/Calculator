@@ -4,11 +4,14 @@
 #endif
 
 #include "Operation.h"
+#include "FactoryInterFace.h"
+#include "Div.h"
 class DivFactory :
-    public Operation
+    public FactoryInterFace
 {
 public:
     DivFactory();
-    double getResult();
+    Operation * CreateOper();
+
 };
 

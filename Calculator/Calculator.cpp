@@ -2,12 +2,22 @@
 
 #include <QString>
 #include <QDebug>
+#include "qmath.h"
 
 //工厂模式实现计算器
 Calculator::Calculator(QWidget *parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
+    initUI();
+    //传入输入数据，加法工厂返回加法结果
+    cal = nullptr;
+    operatorfactory = new OperationFactory();
+   
+}
+
+void Calculator::initUI()
+{
     textPanel = "";
     operand1 = 0.0;
     operand2 = 0.0;
@@ -29,11 +39,14 @@ Calculator::Calculator(QWidget *parent)
     ui.operatorMul->setFont(QFont("YouYuan", 20, QFont::Bold));
     ui.operatorDiv->setFont(QFont("YouYuan", 20, QFont::Bold));
     ui.operatorResult->setFont(QFont("YouYuan", 20, QFont::Bold));
+    ui.pushButton_31->setFont(QFont("YouYuan", 12, QFont::Bold));
+    /*下面这几个还没实现*/
+    ui.pushButton_32->setFont(QFont("YouYuan", 12, QFont::Bold));
+    ui.pushButton_37->setFont(QFont("YouYuan", 12, QFont::Bold));
+    ui.pushButton_42->setFont(QFont("YouYuan", 12, QFont::Bold));
+    ui.pushButton_43->setFont(QFont("YouYuan", 12, QFont::Bold));
+    ui.pushButton_36->setFont(QFont("YouYuan", 12, QFont::Bold));
     ui.dot->setFont(QFont("YouYuan", 20, QFont::Bold));
-    //传入输入数据，加法工厂返回加法结果
-    cal = nullptr;
-    operatorfactory = new OperationFactory();
-   
 }
 
 Calculator::~Calculator()
@@ -137,32 +150,31 @@ void Calculator::on_number9_clicked()
     readNum(9);
 }
 
-
+//简单工厂模式实现
 void Calculator::checkString(QString s)
 {
     //检查式子中是否有运算符还是纯数字
     if (s.contains("+"))
     {
-        //工厂模式获取加法计算对象
+        //简单工厂模式获取加法计算对象
         cal = operatorfactory->creatCalculation('+');
         setCalNum();
-
     }
     else if (s.contains("-"))
     {
-        //工厂模式获取减法计算对象
+        //简单工厂模式获取减法计算对象
         cal = operatorfactory->creatCalculation('-');
         setCalNum();
     }
     else if (s.contains("*"))
     {
-        //工厂模式获取乘法计算对象
+        //简单工厂模式获取乘法计算对象
         cal = operatorfactory->creatCalculation('*');
         setCalNum();
     }
     else if (s.contains("/"))
     {
-        //工厂模式获取除法计算对象
+        //简单工厂模式获取除法计算对象
         cal = operatorfactory->creatCalculation('/');
         setCalNum();
     }
@@ -173,6 +185,46 @@ void Calculator::checkString(QString s)
     }
 
 }
+
+//工厂方法模式实现
+void Calculator::checkString1(QString s)
+{
+    //检查式子中是否有运算符还是纯数字
+    if (s.contains("+"))
+    {
+        //工厂模式获取加法计算对象
+        factoryInterFace = new AddFactory();
+        cal = factoryInterFace->CreateOper();
+        setCalNum();
+    }
+    else if (s.contains("-"))
+    {
+        //工厂模式获取减法计算对象
+        factoryInterFace = new SubFactory();
+        cal = factoryInterFace->CreateOper();
+        setCalNum();
+    }
+    else if (s.contains("*"))
+    {
+        //工厂模式获取乘法计算对象
+        factoryInterFace = new MulFactory();
+        cal = factoryInterFace->CreateOper();
+        setCalNum();
+    }
+    else if (s.contains("/"))
+    {
+        //工厂模式获取除法计算对象
+        factoryInterFace = new DivFactory();
+        cal = factoryInterFace->CreateOper();
+        setCalNum();
+    }
+    else //纯数字
+    {
+        operand1 = s.toDouble();
+        operand2 = 0.0;
+    }
+}
+
 
 void Calculator::setCalNum()
 {
@@ -185,12 +237,14 @@ void Calculator::setCalNum()
     operand2 = 0.0;
 }
 
+
 //加法
 void Calculator::on_operatorAdd_clicked()
 {
     //先计算已有的式子
     QString s = ui.resultText->toPlainText();
-    checkString(s);
+    //checkString(s);  //checkString 为简单工厂模式
+    checkString1(s);   //checkString1 为工厂方法模式
     operat_flag = 1;
     textPanel += QString("+");
     ui.resultText->setText(textPanel);
@@ -202,7 +256,8 @@ void Calculator::on_operatorSub_clicked()
 {
     //先计算已有的式子
     QString s = ui.resultText->toPlainText();
-    checkString(s);
+    //checkString(s);  //checkString 为简单工厂模式
+    checkString1(s);   //checkString1 为工厂方法模式
     operat_flag = 1;
     textPanel += QString("-");
     ui.resultText->setText(textPanel);
@@ -212,7 +267,8 @@ void Calculator::on_operatorSub_clicked()
 void Calculator::on_operatorMul_clicked()
 {
     QString s = ui.resultText->toPlainText();
-    checkString(s);
+    //checkString(s);  //checkString 为简单工厂模式
+    checkString1(s);   //checkString1 为工厂方法模式
     operat_flag = 1;
     textPanel += QString("*");
     ui.resultText->setText(textPanel);
@@ -223,7 +279,8 @@ void Calculator::on_operatorMul_clicked()
 void Calculator::on_operatorDiv_clicked()
 {
     QString s = ui.resultText->toPlainText();
-    checkString(s);
+    //checkString(s);  //checkString 为简单工厂模式
+    checkString1(s);   //checkString1 为工厂方法模式
     operat_flag = 1;
     textPanel += QString("/");
     ui.resultText->setText(textPanel);
@@ -234,7 +291,8 @@ void Calculator::on_operatorDiv_clicked()
 void Calculator::on_operatorResult_clicked()
 {
     QString s = ui.resultText->toPlainText();
-    checkString(s);
+    //checkString(s);  //checkString 为简单工厂模式
+    checkString1(s);   //checkString1 为工厂方法模式
     ui.resultText->setText(textPanel);
 }
 //清屏
@@ -279,4 +337,29 @@ void Calculator::on_reverseNum_clicked()
         ui.resultText->setText("+"+QString(textPanel));
     }
     
+}
+
+//pai运算符
+void Calculator::on_pushButton_31_clicked()
+{
+    ui.resultText->clear();
+    ui.resultText->setText("3.141592653589793238462643383");
+}
+
+//平方
+void Calculator::on_pushButton_42_clicked()
+{
+    //ui.resultText->clear();
+    double x  = textPanel.toDouble();
+    x = x * x;
+    ui.resultText->setText(QString("%1").arg(x));
+}
+
+//开方
+void Calculator::on_pushButton_43_clicked()
+{
+    //ui.resultText->clear();
+    double x = textPanel.toDouble();
+    x = sqrt(x);
+    ui.resultText->setText(QString("%1").arg(x));
 }
